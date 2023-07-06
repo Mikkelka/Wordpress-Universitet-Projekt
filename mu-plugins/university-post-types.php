@@ -23,7 +23,7 @@ function university_post_types() {
     'menu_icon' => 'dashicons-location-alt'
   ));
 
-  // AIzaSyCksCYVH2kYTSYgjOvLIE0MZVj2JpKhK44
+
 
 
   // Event post type
