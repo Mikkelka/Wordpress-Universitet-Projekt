@@ -19,7 +19,7 @@ class HeroSlider {
       var glide = new Glide(".hero-slider", {
         type: "carousel",
         perView: 1,
-        autoplay: 3000
+        autoplay: 3000,
       })
 
       glide.mount()

@@ -112,7 +112,7 @@
 
 <!--  -->
 
-<div class="hero-slider">
+<!-- <div class="hero-slider">
   <div data-glide-el="track" class="glide__track">
     <div class="glide__slides">
       <div class="hero-slider__slide"
@@ -148,7 +148,51 @@
     </div>
     <div class="slider__bullets glide__bullets" data-glide-el="controls[nav]"></div>
   </div>
-</div>
+</div> -->
+
+
+<div class="hero-slider">
+  <div data-glide-el="track" class="glide__track">
+    <div class="glide__slides">
+
+    <?php 
+
+    // slides post type 
+    $args = array(
+      'post_type' => 'slides',
+      'posts_per_page' => -1
+    );
+
+    $slideshowSlides = new WP_Query($args);
+
+    while($slideshowSlides->have_posts()) {
+      $slideshowSlides->the_post();
+    ?>
+
+      <!--  -->
+      <div class="hero-slider__slide"
+        style="background-image: url(<?php the_post_thumbnail_url() ?>);">
+        <div class="hero-slider__interior container">
+          <div class="hero-slider__overlay">
+            <h2 class="headline headline--medium t-center"><?php the_title() ?></h2>
+            <p class="t-center"><?php the_content() ?></p>
+            <p class="t-center no-margin"><a href="#" class="btn btn--blue">Learn more</a></p>
+          </div>
+        </div>
+      </div>
+
+      <?php 
+      }
+        wp_reset_postdata(); 
+      ?>
+
+      <!--  -->
+    </div>
+    <div class="slider__bullets glide__bullets" data-glide-el="controls[nav]"></div>
+  </div>
+</div> 
+
+
 
 <?php get_footer();
 

@@ -23,9 +23,6 @@ function university_post_types() {
     'menu_icon' => 'dashicons-location-alt'
   ));
 
-  // AIzaSyCksCYVH2kYTSYgjOvLIE0MZVj2JpKhK44
-
-
   // Event post type
   register_post_type('event', array(
     'show_in_rest' => true, // show in modern Block Editor screen
@@ -79,6 +76,8 @@ function university_post_types() {
 
   // note post type
   register_post_type('note', array(
+    'capability_type' => "note",
+    'map_meta_cap' => true,
     'show_in_rest' => true, // show in modern Block Editor screen
     "supports" => array("title", "editor"),
     'public' => false,
@@ -93,6 +92,37 @@ function university_post_types() {
     'menu_icon' => 'dashicons-welcome-write-blog'
   ));
 
+  // like post type
+  register_post_type('like', array(
+    'show_in_rest' => false, // or delete
+    "supports" => array("title"),
+    'public' => false,
+    'show_ui' => true,
+    'labels' => array(
+      'name' => 'Likes',
+      'add_new_item' => 'Add New like',
+      'edit_item' => 'Edit like',
+      'all_items' => 'All likes',
+      'singular_name' => 'like'
+    ),
+    'menu_icon' => 'dashicons-heart'
+  ));
+
+  // Slideshow slides post type
+  register_post_type('slides', array(
+    'show_in_rest' => true, // show in modern Block Editor screen
+    "supports" => array("title", "editor", "thumbnail"),
+    'public' => false,
+    'show_ui' => true,
+    'labels' => array(
+      'name' => 'Slides',
+      'add_new_item' => 'Add New slide',
+      'edit_item' => 'Edit slide',
+      'all_items' => 'All slides',
+      'singular_name' => 'slide'
+    ),
+    'menu_icon' => 'dashicons-images-alt'
+  ));
 
 }
  
