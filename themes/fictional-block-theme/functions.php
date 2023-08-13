@@ -18,6 +18,8 @@ function university_custom_rest() {
 add_action('rest_api_init', "university_custom_rest");
 
 
+// 
+// 
 // snippet
 function pageBanner($args = Null) {
 
@@ -55,6 +57,11 @@ function pageBanner($args = Null) {
 <?php 
 }
 
+// snippet end
+// 
+// 
+
+
 
 function university_files()
 {
@@ -76,17 +83,30 @@ function university_files()
   ));
 }
 
-// Register navigation menus and add title tag support
 function university_features() {
+  // Register navigation menus
   register_nav_menu("headerMenuLocation", "Header Menu Loaction" );
   register_nav_menu("footerLocationOne", "Footer Location One" );
   register_nav_menu("footerLocationTwo", "Footer Location Two" );
 
+  // Enable title tag support
   add_theme_support("title-tag");
+
+  // Enable post thumbnails
   add_theme_support( "post-thumbnails" );
+
+  // Add custom image sizes
   add_image_size('professorLandscape', 400, 260, true);
   add_image_size('professorPortrait', 480, 650, true);
   add_image_size('pageBanner', 1500, 350, true);
+
+  // Add editor styles
+  add_theme_support('editor-styles');
+  add_editor_style( array( 
+    'https://fonts.googleapis.com/css?family=Roboto+Condensed:300,300i,400,400i,700,700i|Roboto:100,300,400,400i,700,700i',
+    'build/style-index.css',
+    'build/index.css'
+  ));
 }
 
 // Enqueue styles and scripts when the theme is loaded
@@ -94,6 +114,9 @@ add_action('wp_enqueue_scripts', 'university_files');
 // Register menus and title tag support after the theme setup is complete
 add_action("after_setup_theme", "university_features");
 
+
+// 
+// 
 // Modify event queries to only show future events, sorted by date
 function university_adjust_queries($query) {
 
@@ -124,7 +147,6 @@ function university_adjust_queries($query) {
 }
 
 
-
 // Hook into the pre_get_posts action to modify event queries
 add_action("pre_get_posts", "university_adjust_queries");
 
@@ -137,9 +159,9 @@ function googleMapKey($api) {
 add_filter("acf/fields/google_map/api", "googleMapKey");
 
 
-
+// 
+// 
 // Redirects subscribers to the front page upon login.
-
 function redirecSubsToFrontpage() {
   // Get the current logged-in user.
   $ourCurrentUser = wp_get_current_user();
@@ -155,6 +177,8 @@ function redirecSubsToFrontpage() {
 add_action('admin_init' , 'redirecSubsToFrontpage');
 
 
+// 
+// 
 // Removes the admin bar for subscribers.
 function noSubsAdminBar() {
   // Get the current logged-in user.
@@ -170,6 +194,8 @@ function noSubsAdminBar() {
 add_action('wp_loaded' , 'noSubsAdminBar');
 
 
+// 
+// 
 // Customize Login Screen
 add_filter("login_headerurl", "ourheaderUrl");
 
@@ -192,6 +218,8 @@ function ourLoginTitle($title) {
   return esc_html(get_bloginfo('name'));
 }
 
+// 
+// 
 // force note posts to be private 2
 add_filter('wp_insert_post_data', "makeNotePrivate", 10, 2);
 
@@ -212,3 +240,99 @@ function makeNotePrivate($data, $postarr) {
   
   return $data;
 }
+
+
+// 
+// 
+// custom blocks
+
+// function bannerBlock () {
+//   wp_register_script('bannerBlockScript', get_stylesheet_directory_uri() . '/build/banner.js', array('wp-blocks', "wp-editor" ));
+//   register_block_type('fictional-blocks/banner', array(
+//     "editor_script" => "bannerBlockScript"
+//   ));
+// }
+
+// add_action("init", "bannerBlock");
+
+class PlaceholderBlock {
+  function __construct($name) {
+    $this->name = $name;
+    
+    add_action("init", [$this, 'onInit']);
+  }
+
+  function ourRenderCallback($attributes, $content) {
+    ob_start(); // start the output buffer
+    require get_theme_file_path( "/our-blocks/{$this->name}.php" );
+    return ob_get_clean(); // end the output buffer
+  }
+
+  function onInit() {
+    // Register the script with a unique handle, specifying the path to the script file and its dependencies
+    wp_register_script( $this->name , get_stylesheet_directory_uri() . "/our-blocks/{$this->name}.js", array('wp-blocks', "wp-editor" ));
+
+    // Define the arguments for registering the block type
+    $ourArgs = array(
+      "editor_script" => $this->name,
+      "render_callback" => [$this, "ourRenderCallback"],
+    );
+
+    // Register the block type with a unique name and the defined arguments
+    register_block_type("fictional-blocks/{$this->name}", $ourArgs );
+  }
+}
+
+new PlaceholderBlock("eventsandblogs");
+new PlaceholderBlock("header");
+new PlaceholderBlock("footer");
+
+
+// 
+// 
+class JSXBlock {
+  function __construct($name, $renderCallback = null, $data = null) {
+    $this->name = $name;
+    $this->data = $data;
+    $this->renderCallback = $renderCallback;
+    add_action("init", [$this, 'onInit']);
+  }
+
+  function ourRenderCallback($attributes, $content) {
+    ob_start(); // start the output buffer
+    require get_theme_file_path( "/our-blocks/{$this->name}.php" );
+    return ob_get_clean(); // end the output buffer
+  }
+
+  function onInit() {
+    // Register the script with a unique handle, specifying the path to the script file and its dependencies
+    wp_register_script( $this->name , get_stylesheet_directory_uri() . "/build/{$this->name}.js", array('wp-blocks', "wp-editor" ));
+
+    // If data is available, localize the script with the same handle, making the data accessible in the script
+    if($this->data) {
+      wp_localize_script($this->name, $this->name, $this->data);
+    }
+
+    // Define the arguments for registering the block type
+    $ourArgs = array(
+      "editor_script" => $this->name
+    );
+
+    // If the renderCallback property is true, add the "render_callback" argument to the arguments array
+    if ($this->renderCallback) {
+      $ourArgs["render_callback"] = [$this, "ourRenderCallback"];
+    }
+
+    // Register the block type with a unique name and the defined arguments
+    register_block_type("fictional-blocks/{$this->name}", $ourArgs );
+  }
+}
+
+
+
+
+new JSXBlock('banner', true, ['fallbackimage' => get_theme_file_uri('/images/library-hero.jpg')]); 
+new JSXBlock('genericheading');
+new JSXBlock('genericbutton');
+new JSXBlock('slideshow', true);
+new JSXBlock('slide', true);
