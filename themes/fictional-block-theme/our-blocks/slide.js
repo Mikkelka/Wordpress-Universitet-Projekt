@@ -21,6 +21,9 @@ registerBlockType('fictional-blocks/slide', {
         imgURL: {
             type: 'string',
             default: banner.fallbackimage
+        },
+        themeimage: {
+            type: 'string',
         }
     },
     edit: EditComponent,
@@ -28,6 +31,13 @@ registerBlockType('fictional-blocks/slide', {
 });
 
 function EditComponent(props) {
+
+    useEffect(function () {
+        if (props.attributes.themeimage) {
+            // console.warn(`${slide.themeimagepath}${props.attributes.themeimage}`);
+            props.setAttributes({ imgURL: `${slide.themeimagepath}${props.attributes.themeimage}` })
+        }
+    }, []);
 
     useEffect(function () {
         // Define an asynchronous function called "go"
@@ -42,7 +52,7 @@ function EditComponent(props) {
                 });
 
                 // Update the attributes of props with the URL of the pageBanner size image from the response
-                props.setAttributes({ imgURL: response.media_details.sizes.pageBanner.source_url })
+                props.setAttributes({ themeimage: "", imgURL: response.media_details.sizes.pageBanner.source_url })
             }
             go();
         }

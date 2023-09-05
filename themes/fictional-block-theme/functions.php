@@ -286,6 +286,7 @@ class PlaceholderBlock {
 new PlaceholderBlock("eventsandblogs");
 new PlaceholderBlock("header");
 new PlaceholderBlock("footer");
+new PlaceholderBlock("single");
 
 
 // 
@@ -326,7 +327,7 @@ class JSXBlock {
     // Register the block type with a unique name and the defined arguments
     register_block_type("fictional-blocks/{$this->name}", $ourArgs );
   }
-}
+} 
 
 
 
@@ -335,4 +336,4 @@ new JSXBlock('banner', true, ['fallbackimage' => get_theme_file_uri('/images/lib
 new JSXBlock('genericheading');
 new JSXBlock('genericbutton');
 new JSXBlock('slideshow', true);
-new JSXBlock('slide', true);
+new JSXBlock('slide', true, ['themeimagepath' => get_theme_file_uri('/images/')]); 

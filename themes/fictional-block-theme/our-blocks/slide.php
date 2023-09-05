@@ -1,7 +1,12 @@
 <?php 
-    if(!isset( $attributes['imgURL'] )) {
-        $attributes['imgURL'] = get_theme_file_uri('/images/library-hero.jpg');
-    }
+
+  if (!empty($attributes['themeimage'])) {
+    $attributes['imgURL'] = get_theme_file_uri('/images/' . $attributes['themeimage']);
+  }
+
+  if(!isset( $attributes['imgURL'] )) {
+      $attributes['imgURL'] = get_theme_file_uri('/images/library-hero.jpg');
+  }
 ?>
 
 

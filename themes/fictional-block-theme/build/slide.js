@@ -160,12 +160,23 @@ __webpack_require__.r(__webpack_exports__);
     imgURL: {
       type: 'string',
       default: banner.fallbackimage
+    },
+    themeimage: {
+      type: 'string'
     }
   },
   edit: EditComponent,
   save: SaveComponent
 });
 function EditComponent(props) {
+  (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useEffect)(function () {
+    if (props.attributes.themeimage) {
+      // console.warn(`${slide.themeimagepath}${props.attributes.themeimage}`);
+      props.setAttributes({
+        imgURL: `${slide.themeimagepath}${props.attributes.themeimage}`
+      });
+    }
+  }, []);
   (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useEffect)(function () {
     // Define an asynchronous function called "go"
     if (props.attributes.imgID) {
@@ -180,6 +191,7 @@ function EditComponent(props) {
 
         // Update the attributes of props with the URL of the pageBanner size image from the response
         props.setAttributes({
+          themeimage: "",
           imgURL: response.media_details.sizes.pageBanner.source_url
         });
       }
